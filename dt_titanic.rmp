@@ -55,7 +55,7 @@
         <parameter key="invert_selection" value="false"/>
         <parameter key="include_special_attributes" value="true"/>
       </operator>
-      <operator activated="true" class="numerical_to_binominal" compatibility="10.5.000" expanded="true" height="82" name="Numerical to Binominal (2)" width="90" x="715" y="238">
+      <operator activated="true" class="numerical_to_binominal" compatibility="10.5.000" expanded="true" height="82" name="Numerical to Binominal (2)" width="90" x="849" y="136">
         <parameter key="attribute_filter_type" value="single"/>
         <parameter key="attribute" value="Survived"/>
         <parameter key="attributes" value=""/>
@@ -71,8 +71,8 @@
         <parameter key="min" value="0.0"/>
         <parameter key="max" value="0.0"/>
       </operator>
-      <operator activated="true" class="multiply" compatibility="10.5.000" expanded="true" height="103" name="Duplicate" width="90" x="849" y="340"/>
-      <operator activated="true" class="blending:split_data" compatibility="10.5.000" expanded="true" height="103" name="Split Data" width="90" x="983" y="136">
+      <operator activated="true" class="multiply" compatibility="10.5.000" expanded="true" height="103" name="Duplicate" width="90" x="380" y="340"/>
+      <operator activated="true" class="blending:split_data" compatibility="10.5.000" expanded="true" height="103" name="Split Data" width="90" x="648" y="340">
         <enumeration key="partitions">
           <parameter key="ratio" value="0.7"/>
           <parameter key="ratio" value="0.3"/>
@@ -81,7 +81,8 @@
         <parameter key="use_local_random_seed" value="false"/>
         <parameter key="local_random_seed" value="1992"/>
       </operator>
-      <operator activated="true" class="concurrency:parallel_decision_tree" compatibility="10.5.000" expanded="true" height="103" name="Decision Tree" width="90" x="1117" y="34">
+      <operator activated="true" class="multiply" compatibility="10.5.000" expanded="true" height="103" name="Multiply" width="90" x="849" y="748"/>
+      <operator activated="true" class="concurrency:parallel_decision_tree" compatibility="10.5.000" expanded="true" height="103" name="Decision Tree" width="90" x="1050" y="442">
         <parameter key="criterion" value="accuracy"/>
         <parameter key="maximal_depth" value="10"/>
         <parameter key="apply_pruning" value="true"/>
@@ -92,10 +93,41 @@
         <parameter key="minimal_size_for_split" value="4"/>
         <parameter key="number_of_prepruning_alternatives" value="3"/>
       </operator>
-      <operator activated="true" class="apply_model" compatibility="10.5.000" expanded="true" height="82" name="Apply Model" width="90" x="1251" y="136">
+      <operator activated="true" class="multiply" compatibility="10.5.000" expanded="true" height="103" name="Multiply (2)" width="90" x="1184" y="442"/>
+      <operator activated="true" class="apply_model" compatibility="10.5.000" expanded="true" height="82" name="Apply Model in train set" width="90" x="1318" y="697">
         <list key="application_parameters"/>
       </operator>
-      <operator activated="true" class="performance_binominal_classification" compatibility="10.5.000" expanded="true" height="82" name="Performance (2)" width="90" x="1385" y="187">
+      <operator activated="true" class="performance_classification" compatibility="10.5.000" expanded="true" height="82" name="Performance Test" width="90" x="1519" y="697">
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="accuracy" value="true"/>
+        <parameter key="classification_error" value="false"/>
+        <parameter key="kappa" value="false"/>
+        <parameter key="weighted_mean_recall" value="false"/>
+        <parameter key="weighted_mean_precision" value="false"/>
+        <parameter key="spearman_rho" value="false"/>
+        <parameter key="kendall_tau" value="false"/>
+        <parameter key="absolute_error" value="false"/>
+        <parameter key="relative_error" value="false"/>
+        <parameter key="relative_error_lenient" value="false"/>
+        <parameter key="relative_error_strict" value="false"/>
+        <parameter key="normalized_absolute_error" value="false"/>
+        <parameter key="root_mean_squared_error" value="false"/>
+        <parameter key="root_relative_squared_error" value="false"/>
+        <parameter key="squared_error" value="false"/>
+        <parameter key="correlation" value="false"/>
+        <parameter key="squared_correlation" value="false"/>
+        <parameter key="cross-entropy" value="false"/>
+        <parameter key="margin" value="false"/>
+        <parameter key="soft_margin_loss" value="false"/>
+        <parameter key="logistic_loss" value="false"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+        <list key="class_weights"/>
+      </operator>
+      <operator activated="true" class="apply_model" compatibility="10.5.000" expanded="true" height="82" name="Apply Model on Test set" width="90" x="1318" y="595">
+        <list key="application_parameters"/>
+      </operator>
+      <operator activated="true" class="performance_binominal_classification" compatibility="10.5.000" expanded="true" height="82" name="Performance Train" width="90" x="1519" y="595">
         <parameter key="manually_set_positive_class" value="false"/>
         <parameter key="main_criterion" value="first"/>
         <parameter key="accuracy" value="true"/>
@@ -130,13 +162,18 @@
       <connect from_op="Numerical to Polynominal" from_port="example set output" to_op="Numerical to Binominal (2)" to_port="example set input"/>
       <connect from_op="Numerical to Binominal (2)" from_port="example set output" to_op="Duplicate" to_port="input"/>
       <connect from_op="Duplicate" from_port="output 1" to_op="Split Data" to_port="example set"/>
-      <connect from_op="Duplicate" from_port="output 2" to_port="result 3"/>
-      <connect from_op="Split Data" from_port="partition 1" to_op="Decision Tree" to_port="training set"/>
-      <connect from_op="Split Data" from_port="partition 2" to_op="Apply Model" to_port="unlabelled data"/>
-      <connect from_op="Decision Tree" from_port="model" to_op="Apply Model" to_port="model"/>
-      <connect from_op="Apply Model" from_port="labelled data" to_op="Performance (2)" to_port="labelled data"/>
-      <connect from_op="Apply Model" from_port="model" to_port="result 2"/>
-      <connect from_op="Performance (2)" from_port="performance" to_port="result 1"/>
+      <connect from_op="Duplicate" from_port="output 2" to_port="result 1"/>
+      <connect from_op="Split Data" from_port="partition 1" to_op="Multiply" to_port="input"/>
+      <connect from_op="Split Data" from_port="partition 2" to_op="Apply Model on Test set" to_port="unlabelled data"/>
+      <connect from_op="Multiply" from_port="output 1" to_op="Decision Tree" to_port="training set"/>
+      <connect from_op="Multiply" from_port="output 2" to_op="Apply Model in train set" to_port="unlabelled data"/>
+      <connect from_op="Decision Tree" from_port="model" to_op="Multiply (2)" to_port="input"/>
+      <connect from_op="Multiply (2)" from_port="output 1" to_op="Apply Model on Test set" to_port="model"/>
+      <connect from_op="Multiply (2)" from_port="output 2" to_op="Apply Model in train set" to_port="model"/>
+      <connect from_op="Apply Model in train set" from_port="labelled data" to_op="Performance Test" to_port="labelled data"/>
+      <connect from_op="Performance Test" from_port="performance" to_port="result 3"/>
+      <connect from_op="Apply Model on Test set" from_port="labelled data" to_op="Performance Train" to_port="labelled data"/>
+      <connect from_op="Performance Train" from_port="performance" to_port="result 2"/>
       <portSpacing port="source_input 1" spacing="0"/>
       <portSpacing port="sink_result 1" spacing="0"/>
       <portSpacing port="sink_result 2" spacing="0"/>
